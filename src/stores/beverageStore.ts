@@ -52,27 +52,21 @@ export const useBeverageStore = defineStore('BeverageStore', {
     },
 
     async makeBeverage() {
-  const newBeverage: BeverageType = {
-    name: this.currentName || 'Unnamed Beverage',
-    id: `${this.currentBase.id}-${this.currentTemp}-${this.currentSyrup.id}-${this.currentCreamer.id}`,
-    temp: this.currentTemp,
-    base: this.currentBase,
-    syrup: this.currentSyrup,
-    creamer: this.currentCreamer,
-  };
-
-  try {
-    const beverageRef = doc(db, "beverages", newBeverage.id); // Use the generated ID
-    await setDoc(beverageRef, newBeverage); // Save using the ID
-    this.beverage.push(newBeverage);
-    this.currentBeverage = newBeverage;
-  } catch (err) {
-    console.error("Failed to save beverage:", err);
-  }
-},
+      this.currentBeverage = {
+        name: this.currentName,
+        id: '${this.currentBase.id}- ${this.currentTemp.id}-${this.currentSyrup.id}-${this.currentCreamer.id}',
+        temp: this.currentTemp,
+        base: this.currentBase,
+        syrup: this.currentSyrup,
+        creamer: this.currentCreamer,
+      };
+      this.beverage.push(this.currentBeverage);
+      
+      await addDoc(collection(db, 'beverages'), this.currentBeverage);
+    },
     
 
-    
+    //v does not work
     showBeverage(bev: BeverageType) {
       this.currentBeverage = bev;
       this.currentBase = bev.base;
@@ -82,11 +76,6 @@ export const useBeverageStore = defineStore('BeverageStore', {
       this.currentName = bev.name || "";  // Set the name as well if you want it to be visible
     },
     
-    clearSaves() {
-      this.beverage = [];  // Clears the saved beverages list
-      localStorage.removeItem('pinia');  // Removes the Pinia store data from localStorage
-
-    },
 
   },
   persist: true,
